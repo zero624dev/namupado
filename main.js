@@ -37,7 +37,6 @@ function createWindow() {
         win.webContents.send("game-end", { ...game, endTime: Date.now() })
       })
     }
-
   })
 }
 
@@ -54,8 +53,7 @@ ipcMain.on("game-start", async (event, { start, end }) => {
       game.startPage = await getRandomPage()
       break
     default:
-      game.startPage = "https://namu.wiki/w/" + start.slice(7)
-      console.log(game.endPage)
+      game.startPage = await getFinalURL("https://namu.wiki/w/" + start.slice(7))
       break
   }
   switch (end) {
@@ -63,7 +61,8 @@ ipcMain.on("game-start", async (event, { start, end }) => {
       game.endPage = await getRandomPage()
       break
     default:
-      game.endPage = "https://namu.wiki/w/" + end.slice(7)
+      game.endPage = await getFinalURL("https://namu.wiki/w/" + end.slice(7))
+      console.log(end, game.endPage)
       break
   }
   win?.loadURL(game.startPage).then(() => {
@@ -94,7 +93,7 @@ function getRandomPage() {
   return new Promise((resolve, reject) => {
     fetch("https://namu.wiki/random")
       .then((res) => {
-        resolve(res.url.replace(/\?from=?.+/, ""));
+        getFinalURL(res.url).then(resolve).catch(reject);
       })
       .catch((err) => {
         reject(err);
@@ -102,3 +101,14 @@ function getRandomPage() {
   });
 }
 
+function getFinalURL(url) {
+  return new Promise((resolve, reject) => {
+    fetch(url)
+      .then((res) => {
+        resolve(res.url.replace(/\?from=?.+/, ""));
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
