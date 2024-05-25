@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>나무위키 파도타기</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="menu">
+    <div class="content">
+      <h1 class="title">나무위키 파도타기</h1>
+      <img src="logo.png" />
+      <button id="selectedMenu" onclick="select.style.visibility = 'visible'">랜덤-랜덤</button>
+      <button class="start-button" onclick="window.api.send('game-start', {start,end})">게임시작</button>
+    </div>
+  </div>
+  <div class="menu" id="select" style="visibility: hidden">
+    <a class="close" onclick="select.style.visibility = 'hidden'">×</a>
+    <div class="content">
+      <h1 class="title">시작점</h1>
+      <div>
+        <button class="mode1" onclick="soontm()">인물</button>
+        <button class="mode1" onclick="soontm()">장소</button>
+        <button class="mode1" onclick="soontm()">사물</button>
+        <button class="mode1" onclick="soontm()">게임</button>
+        <button class="mode1 selected" onclick="selectMod1(this)">랜덤</button>
+        <button class="mode1" id="custom1" onclick="startCustomInput.style.visibility = 'visible'">커스텀</button>
+      </div>
+      <h1 class="title">종점</h1>
+      <div>
+        <button class="mode2" onclick="soontm()">인물</button>
+        <button class="mode2" onclick="soontm()">장소</button>
+        <button class="mode2" onclick="soontm()">사물</button>
+        <button class="mode2" onclick="soontm()">게임</button>
+        <button class="mode2 selected" onclick="selectMod2(this)">랜덤</button>
+        <button class=" mode2" id="custom2" onclick="endCustomInput.style.visibility = 'visible'">커스텀</button>
+      </div>
+    </div>
+  </div>
+  <div class="menu" id="startCustomInput" style="visibility: hidden">
+    <a class="close" onclick="startCustomInput.style.visibility = 'hidden'">×</a>
+    <div class="content">
+      <h1 class="title">시작점 커스텀</h1>
+      <input type="text" id="startInput" placeholder="시작점을 입력하세요" onsubmit="selectCustom1()" />
+      <button onclick="selectCustom1()">확인</button>
+    </div>
+  </div>
+  <div class="menu" id="endCustomInput" style="visibility: hidden">
+    <a class="close" onclick="endCustomInput.style.visibility = 'hidden'">×</a>
+    <div class="content">
+      <h1 class="title">종점 커스텀</h1>
+      <input type="text" id="endInput" placeholder="종점을 입력하세요" onsubmit="selectCustom2()" />
+      <button onclick="selectCustom2()">확인</button>
+    </div>
+  </div>
+  <div class="menu" id="result" style="visibility: hidden">
+    <a class="close" onclick="result.style.visibility = 'hidden'">×</a>
+    <div class="content">
+      <h1 class="title">결과</h1>
+      <text id="resultText">
+      </text>
+      <h1 class="title">경로</h1>
+      <text id="historyText">
+      </text>
+    </div>
+  </div>
+  <script>
+    let start = "random", end = "random";
+    function soontm() {
+      alert("준비중입니다.");
+    }
+    function selectCustom1() {
+      selectMod1(custom1);
+      startCustomInput.style.visibility = 'hidden';
+    }
+    function selectCustom2() {
+      selectMod2(custom2);
+      endCustomInput.style.visibility = 'hidden';
+    }
+    function selectMod1(tar) {
+      const startMod = document.getElementsByClassName("mode1");
+      for (let i = 0; i < startMod.length; i++) {
+        startMod[i].classList.remove("selected");
+      }
+      tar.classList.add("selected");
+      switch (tar.innerText) {
+        case "인물":
+          start = "character";
+          break;
+        case "장소":
+          start = "place";
+          break;
+        case "사물":
+          start = "object";
+          break;
+        case "게임":
+          start = "game";
+          break;
+        case "랜덤":
+          start = "random";
+          break;
+        case "커스텀":
+          start = "custom-" + document.getElementById("startInput").value.replace(/\?from=?.+/, "").replace("https://namu.wiki/w/", "").trim();
+          break;
+      }
+      setSeletedMenu()
+    }
+    function selectMod2(tar) {
+      const endMod = document.getElementsByClassName("mode2");
+      for (let i = 0; i < endMod.length; i++) {
+        endMod[i].classList.remove("selected");
+      }
+      tar.classList.add("selected");
+      switch (tar.innerText) {
+        case "인물":
+          end = "character";
+          break;
+        case "장소":
+          end = "place";
+          break;
+        case "사물":
+          end = "object";
+          break;
+        case "게임":
+          end = "game";
+          break;
+        case "랜덤":
+          end = "random";
+          break;
+        case "커스텀":
+          end = "custom-" + document.getElementById("startInput").value.replace(/\?from=?.+/, "").replace("https://namu.wiki/w/", "").trim();
+          break;
+      }
+      setSeletedMenu()
+    }
+    function setSeletedMenu() {
+      selectedMenu.innerText = en2ko(start) + "-" + en2ko(end);
+    }
+
+    function en2ko(menu) {
+      switch (menu) {
+        case "character":
+          return "인물";
+          break;
+        case "place":
+          return "장소";
+          break;
+        case "object":
+          return "사물";
+          break;
+        case "game":
+          return "게임";
+          break;
+        case "random":
+          return "랜덤";
+          break;
+        default:
+          return "커스텀";
+          break;
+      }
+    }
+  </script>
+</body>
+
+</html>
